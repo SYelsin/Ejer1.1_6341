@@ -10,9 +10,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-
-    private EditText num1;
-    private EditText num2;
+    Resultado funcion;
+    EditText num1;
+    EditText num2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,72 +25,80 @@ public class MainActivity extends AppCompatActivity {
         Button suma = findViewById(R.id.btn_suma);
         Button resta = findViewById(R.id.btn_resta);
         Button multiplicacion = findViewById(R.id.btn_multi);
-        Button division = findViewById(R.id.btn_divi);
+        Button dividicion = findViewById(R.id.btn_divi);
 
-        suma.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int[] numeros = obtenerNumeros();
-                if (numeros != null) {
-                    int result = numeros[0] + numeros[1];
-                    enviarResultado("suma", result);
-                }
-            }
-        });
+        Intent pantalla = new Intent(this, ResultActivity.class);
 
-        resta.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int[] numeros = obtenerNumeros();
-                if (numeros != null) {
-                    int result = numeros[0] - numeros[1];
-                    enviarResultado("resta", result);
-                }
-            }
-        });
-
-        multiplicacion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int[] numeros = obtenerNumeros();
-                if (numeros != null) {
-                    int result = numeros[0] * numeros[1];
-                    enviarResultado("multiplicación", result);
-                }
-            }
-        });
-
-        division.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int[] numeros = obtenerNumeros();
-                if (numeros != null) {
-                    if (numeros[1] == 0) {
-                        Toast.makeText(getApplicationContext(), "No se puede dividir por cero", Toast.LENGTH_LONG).show();
-                    } else {
-                        int result = numeros[0] / numeros[1];
-                        enviarResultado("división", result);
-                    }
-                }
-            }
-        });
+        suma.setOnClickListener(this::onClickSuma);
+        resta.setOnClickListener(this::onClickResta);
+        multiplicacion.setOnClickListener(this::onClickMultiplicacion);
+        dividicion.setOnClickListener(this::onClickDivision);
     }
 
-    private int[] obtenerNumeros() {
+    private void onClickSuma(View view) {
         try {
             int n1 = Integer.parseInt(num1.getText().toString());
             int n2 = Integer.parseInt(num2.getText().toString());
-            return new int[] {n1, n2};
-        } catch (NumberFormatException e) {
-            Toast.makeText(getApplicationContext(), "Ingrese números válidos", Toast.LENGTH_LONG).show();
-            return null;
+
+            funcion = new Resultado(n1, n2);
+
+            int suma = funcion.sumar();
+            mostrarResultados("suma", Integer.toString(suma));
+        } catch (Exception e) {
+            mostrarError();
         }
     }
 
-    private void enviarResultado(String operacion, int resultado) {
-        Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
-        intent.putExtra("operacion", operacion);
-        intent.putExtra("resultado", resultado);
-        startActivity(intent);
+    private void onClickResta(View view) {
+        try {
+            int n1 = Integer.parseInt(num1.getText().toString());
+            int n2 = Integer.parseInt(num2.getText().toString());
+
+            funcion = new Resultado(n1, n2);
+
+            int resta = funcion.restar();
+            mostrarResultados("resta", Integer.toString(resta));
+        } catch (Exception e) {
+            mostrarError();
+        }
+    }
+
+    private void onClickMultiplicacion(View view) {
+        try {
+            int n1 = Integer.parseInt(num1.getText().toString());
+            int n2 = Integer.parseInt(num2.getText().toString());
+
+            funcion = new Resultado(n1, n2);
+
+            int multi = funcion.multiplicar();
+            mostrarResultados("Multiplicación", Integer.toString(multi));
+        } catch (Exception e) {
+            mostrarError();
+        }
+    }
+
+    private void onClickDivision(View view) {
+        try {
+            int n1 = Integer.parseInt(num1.getText().toString());
+            int n2 = Integer.parseInt(num2.getText().toString());
+
+            funcion = new Resultado(n1, n2);
+
+            int division = funcion.dividir();
+            mostrarResultados("división", Integer.toString(division));
+        } catch (Exception e) {
+            mostrarError();
+        }
+    }
+
+    private void mostrarResultados(String operacion, String resultado) {
+        Intent pantalla = new Intent(this, ResultActivity.class);
+        pantalla.putExtra("Operacion", operacion);
+        pantalla.putExtra("Respuesta", resultado);
+        startActivity(pantalla);
+    }
+
+    private void mostrarError() {
+        Toast.makeText(this, "Ingrese los campos que estan vacios", Toast.LENGTH_LONG).show();
     }
 }
